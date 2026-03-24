@@ -39,13 +39,18 @@ finish-args:
   - '--allow=bluetooth'
 
 modules:
-  - name: 'libhidapi'
-    buildsystem: cmake-ninja
+  # Required by pulseview
+  - name: 'boost-pulseview'
+    buildsystem: simple
+    build-commands:
+      - './bootstrap.sh --prefix=/app --libdir=/app/lib --with-toolset=gcc --with-libraries=system,filesystem,serialization,test,stacktrace'
+      - './b2 install variant=release'
     sources:
       - type: archive
-        url: https://github.com/libusb/hidapi/archive/hidapi-0.15.0.tar.gz
-        sha512: a4ddd13a80a84956872fa52aa861b40e4959f301d8d91afe0feaf9dbd87394561e1fdd20cbf8cf47200845f80a8db8a934bc2e3025fe6f16435e37c17621e7b6
+        url: 'https://archives.boost.io/release/1.90.0/source/boost_1_90_0.tar.bz2'
+        sha256: '49551aff3b22cbc5c5a9ed3dbc92f0e23ea50a0f7325b0d198b705e8ee3fc305'
 
+  # Required by libsigrok
   - name: 'libzip'
     buildsystem: cmake-ninja
     config-opts:
@@ -59,27 +64,21 @@ modules:
         url: 'https://github.com/nih-at/libzip.git'
         tag: 'v1.11.4'
 
-  - name: 'boost-pulseview'
-    buildsystem: simple
-    build-commands:
-      - './bootstrap.sh --prefix=/app --libdir=/app/lib --with-toolset=gcc --with-libraries=system,filesystem,serialization,test,stacktrace'
-      - './b2 install variant=release'
-    sources:
-      - type: archive
-        url: 'https://archives.boost.io/release/1.90.0/source/boost_1_90_0.tar.bz2'
-        sha256: '49551aff3b22cbc5c5a9ed3dbc92f0e23ea50a0f7325b0d198b705e8ee3fc305'
-
+  # Required to build libsigc++ and glibmm
   - name: 'mm-common'
     buildsystem: meson
     sources:
       - type: git
         url: 'https://gitlab.gnome.org/GNOME/mm-common.git'
         tag: '1.0.7'
+      # This is technically not needed for pure binary distribution, but without it glibmm and libstdc++ may fail to build. Needs
+      # more info on this.
       - type: file
         url: 'https://gcc.gnu.org/onlinedocs/gcc-15.2.0/libstdc++/api/libstdc++.tag'
         sha256: '8fb9721588da04c509c601ddc4680803de99b6cd77ba1db4886788619f1c1db1'
-        dest: doctags/
+        dest: 'doctags/'
 
+  # Required by glibmm
   - name: 'libsigc++'
     buildsystem: meson
     config-opts:
@@ -93,6 +92,7 @@ modules:
         url: 'https://github.com/libsigcplusplus/libsigcplusplus.git'
         tag: '2.12.1'
 
+  # Required by pulseview
   - name: 'glibmm'
     buildsystem: meson
     config-opts:
@@ -104,6 +104,15 @@ modules:
         url: 'https://gitlab.gnome.org/GNOME/glibmm.git'
         tag: '2.66.8'
 
+  # Used by libftdi1 and libsigrok
+  - name: 'libhidapi'
+    buildsystem: cmake-ninja
+    sources:
+      - type: archive
+        url: 'https://github.com/libusb/hidapi/archive/hidapi-0.15.0.tar.gz'
+        sha512: 'a4ddd13a80a84956872fa52aa861b40e4959f301d8d91afe0feaf9dbd87394561e1fdd20cbf8cf47200845f80a8db8a934bc2e3025fe6f16435e37c17621e7b6'
+
+  # Required by libftdi1
   - name: 'confuse'
     buildsystem: autotools
     no-autogen: true
@@ -112,6 +121,7 @@ modules:
         url: 'https://github.com/libconfuse/libconfuse/releases/download/v3.3/confuse-3.3.tar.gz'
         sha256: '3a59ded20bc652eaa8e6261ab46f7e483bc13dad79263c15af42ecbb329707b8'
 
+  # Used by libsigrok
   - name: 'libftdi1'
     buildsystem: cmake-ninja
     config-opts:
@@ -124,6 +134,7 @@ modules:
         url: 'https://www.intra2net.com/en/developer/libftdi/download/libftdi1-1.5.tar.bz2'
         sha512: 'c525b2ab6aff9ef9254971ae7d57f3549a36a36875765c48f947d52532814a2a004de1232389d4fe824a8c8ab84277b08427308573476e1da9b7db83db802f6f'
 
+  # Used by libsigrok
   - name: 'libieee1284'
     buildsystem: autotools
     config-opts:
@@ -133,9 +144,10 @@ modules:
         url: 'https://github.com/twaugh/libieee1284.git'
         tag: 'V0_2_11'
       - type: patch
-        path: libieee1284-skip-docs.patch
+        path: 'libieee1284-skip-docs.patch'
         use-git: true
 
+  # Used by libsigrok
   - name: 'libserialport'
     buildsystem: autotools
     sources:
