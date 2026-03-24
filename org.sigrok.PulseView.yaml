@@ -163,8 +163,8 @@ modules:
       - '--enable-java=no'
     sources:
       - type: git
-        url: 'https://github.com/sigrokproject/libsigrok.git'
-        commit: '0bc2487778e660f4d3116729b6f4aee2b1996bb0'
+        url: 'https://github.com/dogtopus/libsigrok.git'
+        commit: 'fdf372cc0a328906049957c95267ee9134575771'
 
   - name: 'libsigrokdecode'
     buildsystem: autotools
