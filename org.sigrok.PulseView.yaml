@@ -186,3 +186,6 @@ modules:
       - type: git
         url: 'https://github.com/sigrokproject/pulseview'
         commit: 'af02198741b4e57c9f9b796bd5e6c0f2ae9f2f2b'
+      - type: patch
+        path: 'pulseview-appdata-fix.patch'
+        use-git: true
