@@ -1,0 +1,31 @@
+# TODO make extra-data work
+id: 'org.sigrok.Firmware.px-logic'
+branch: '1.0.0'
+
+runtime: 'org.sigrok.PulseView'
+runtime-version: 'master'
+sdk: 'org.kde.Sdk//6.10'
+build-extension: true
+
+modules:
+  - name: 'firmware'
+    buildsystem: simple
+    build-commands:
+      - 'mkdir -p ${FLATPAK_DEST}/firmware'
+      - 'install -Dm644 px-logic-mcu.fw ${FLATPAK_DEST}/firmware/'
+      - 'install -Dm644 px-logic-fpga-stage1.fw ${FLATPAK_DEST}/firmware/'
+      - 'install -Dm644 px-logic-fpga-stage2.fw ${FLATPAK_DEST}/firmware/'
+
+    sources:
+      - type: file
+        url: 'https://raw.githubusercontent.com/PXLogic/PXView/0ac8c55bc86cf90f41496dcb422caa518ac4d4b0/PXView/res/SCI_LOGIC.bin'
+        sha256: '75d1d38a9ea4bddef6bd41637939ee27028b75c86bbf504350fddad1129aa5ae'
+        dest-filename: 'px-logic-mcu.fw'
+      - type: file
+        url: 'https://raw.githubusercontent.com/PXLogic/PXView/0ac8c55bc86cf90f41496dcb422caa518ac4d4b0/PXView/res/hspi_ddr_RST.bin'
+        sha256: '1b4bf398a4cafd9d2fb0f118982ebc064db22ebdd50db36097610f82ec45ec69'
+        dest-filename: 'px-logic-fpga-stage1.fw'
+      - type: file
+        url: 'https://raw.githubusercontent.com/PXLogic/PXView/0ac8c55bc86cf90f41496dcb422caa518ac4d4b0/PXView/res/hspi_ddr.bin'
+        sha256: 'aa2fb803a46886dc77633c7e6fec87ca0a699a3db6a7d22732d3084bd76dd514'
+        dest-filename: 'px-logic-fpga-stage2.fw'

@@ -1,0 +1,28 @@
+# TODO make extra-data work
+id: 'org.sigrok.Firmware.saleae-logic16'
+branch: '1.0.0'
+
+runtime: 'org.sigrok.PulseView'
+runtime-version: 'master'
+sdk: 'org.kde.Sdk//6.10'
+build-extension: true
+
+modules:
+  - name: 'firmware'
+    buildsystem: simple
+    build-commands:
+      - 'unzip logic.zip'
+      - 'mkdir -p ${FLATPAK_DEST}/firmware'
+      - 'mkdir out'
+      - 'cd out && python ../sigrok-util/firmware/saleae-logic16/sigrok-fwextract-saleae-logic16 "../Logic 1.2.10 (64-bit)/Logic"'
+      - 'cp out/* ${FLATPAK_DEST}/firmware/'
+
+    sources:
+      - type: file
+        url: 'https://downloads.saleae.com/logic/1.2.10/Logic+1.2.10+(64-bit).zip'
+        sha256: '07121e7833a14cae929b5d84e0faa56e77f1e659381976b4f6f7b068dd157dea'
+        dest-filename: 'logic.zip'
+      - type: git
+        url: 'https://github.com/sigrokproject/sigrok-util.git'
+        commit: '249b79d0a94e9ac4ec96533bf3108e2a50e6b38d'
+        dest: 'sigrok-util'

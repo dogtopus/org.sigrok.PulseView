@@ -6,6 +6,18 @@ sdk: 'org.kde.Sdk'
 command: 'pulseview'
 rename-icon: 'pulseview'
 
+add-extensions:
+  org.sigrok.Firmware:
+    version: '1.0.0'
+    # We can also expose the entire flatpak package as sigrok-firmware, but this also exports flatpak metadata files
+    # to that directory. To avoid this, we create a dedicated directory and merge it so those files will not get
+    # exported.
+    directory: 'share/sigrok-flatpak-ext'
+    merge-dirs: 'firmware'
+    subdirectories: true
+    no-autodownload: true
+    autodelete: true
+
 cleanup:
   # docs
   - '/share/doc'
@@ -29,6 +41,10 @@ cleanup:
   - '/share/mm-common'
   - '/share/pkgconfig'
 
+cleanup-commands:
+  # Extension mount point
+  - 'mkdir -p ${FLATPAK_DEST}/share/sigrok-flatpak-ext'
+  - 'ln -s ${FLATPAK_DEST}/share/sigrok-flatpak-ext/firmware ${FLATPAK_DEST}/share/sigrok-firmware'
 
 finish-args:
   - '--share=network'
